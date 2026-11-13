@@ -53,27 +53,77 @@ async function initObjects() {
     update();
   } catch (err) {
     console.error(err);
-    el.statsBar.textContent = 'Lỗi nạp objects.json.';
+    el.statsBar.textContent = 'Lỗi nạp objects.json hoặc chạy ngoài HTTP server.';
   }
 }
 
+// Tải ảnh và tự động cắt bỏ viền đen thừa xung quanh thiên thể
 function loadObjectImage(obj) {
   return new Promise((resolve) => {
     if (loadedImages[obj.id]) {
       resolve(loadedImages[obj.id]);
       return;
     }
+
     const img = new Image();
     img.src = `${OBJECT_DIR}${obj.file}`;
     img.onload = () => {
+      const w = img.naturalWidth;
+      const h = img.naturalHeight;
+
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = w;
+      tempCanvas.height = h;
+      const tCtx = tempCanvas.getContext('2d');
+      tCtx.drawImage(img, 0, 0);
+
+      let cropData = { x: 0, y: 0, width: w, height: h };
+
+      try {
+        const imgData = tCtx.getImageData(0, 0, w, h);
+        const data = imgData.data;
+
+        let minX = w, minY = h, maxX = 0, maxY = 0;
+        let threshold = 15; // Ngưỡng phân biệt nền đen với thiên thể
+
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) {
+            const idx = (y * w + x) * 4;
+            if (data[idx] > threshold || data[idx + 1] > threshold || data[idx + 2] > threshold) {
+              if (x < minX) minX = x;
+              if (x > maxX) maxX = x;
+              if (y < minY) minY = y;
+              if (y > maxY) maxY = y;
+            }
+          }
+        }
+
+        if (minX <= maxX && minY <= maxY) {
+          const padding = 2;
+          minX = Math.max(0, minX - padding);
+          minY = Math.max(0, minY - padding);
+          maxX = Math.min(w - 1, maxX + padding);
+          maxY = Math.min(h - 1, maxY + padding);
+
+          cropData = {
+            x: minX,
+            y: minY,
+            width: maxX - minX + 1,
+            height: maxY - minY + 1
+          };
+        }
+      } catch (e) {
+        console.warn('Lỗi quét pixel do CORS:', e);
+      }
+
       loadedImages[obj.id] = {
-        img,
-        width: img.naturalWidth,
-        height: img.naturalHeight,
+        img: img,
+        crop: cropData,
         loaded: true
       };
       resolve(loadedImages[obj.id]);
     };
+
     img.onerror = () => {
       loadedImages[obj.id] = { loaded: false };
       resolve(loadedImages[obj.id]);
@@ -147,7 +197,7 @@ async function update() {
 
   ctx.clearRect(0, 0, W, H);
 
-  // Nền bên trong FOV
+  // Vùng nhìn FOV bên trong
   ctx.save();
   ctx.beginPath();
   ctx.arc(cx, cy, radius, 0, Math.PI * 2);
@@ -160,9 +210,12 @@ async function update() {
   const objDiameterPx = currentObj.angularSizeArcsec * pxPerArcsec;
 
   if (imgAsset.loaded) {
-    const aspect = imgAsset.width / imgAsset.height;
+    const cW = imgAsset.crop.width;
+    const cH = imgAsset.crop.height;
+
+    const aspect = cW / cH;
     let drawW, drawH;
-    if (aspect >= 1) {
+    if (cW >= cH) {
       drawW = objDiameterPx;
       drawH = objDiameterPx / aspect;
     } else {
@@ -170,13 +223,25 @@ async function update() {
       drawW = objDiameterPx * aspect;
     }
 
-    // Bật khử răng cưa và làm mịn ảnh chất lượng cao
+    // Mô phỏng độ sáng tối đi theo khẩu độ / quang học (f-ratio)
+    let brightnessFactor = Math.min(1.0, Math.max(0.25, 5 / fRatio));
+    if (useEp && exitPupil < 1.0) {
+      brightnessFactor *= Math.max(0.3, exitPupil);
+    }
+
+    ctx.save();
+    ctx.globalAlpha = brightnessFactor;
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
 
-    ctx.drawImage(imgAsset.img, cx - drawW / 2, cy - drawH / 2, drawW, drawH);
+    ctx.drawImage(
+      imgAsset.img,
+      imgAsset.crop.x, imgAsset.crop.y, cW, cH,
+      cx - drawW / 2, cy - drawH / 2, drawW, drawH
+    );
+    ctx.restore();
   } else {
-    // Thông báo khi chưa có file ảnh thực tế trong thư mục object/
+    // Thông báo khi chưa có file ảnh vật thể trong thư mục object/
     ctx.fillStyle = '#ff6b6b';
     ctx.font = '14px system-ui, sans-serif';
     ctx.textAlign = 'center';
