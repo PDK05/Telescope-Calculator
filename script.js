@@ -147,6 +147,7 @@ async function update() {
 
   ctx.clearRect(0, 0, W, H);
 
+  // Nền bên trong FOV
   ctx.save();
   ctx.beginPath();
   ctx.arc(cx, cy, radius, 0, Math.PI * 2);
@@ -159,6 +160,7 @@ async function update() {
   const objDiameterPx = currentObj.angularSizeArcsec * pxPerArcsec;
 
   if (imgAsset.loaded) {
+    // Chỉ vẽ ảnh thực khi đã tìm thấy file trong object/
     const aspect = imgAsset.width / imgAsset.height;
     let drawW, drawH;
     if (aspect >= 1) {
@@ -171,10 +173,12 @@ async function update() {
 
     ctx.drawImage(imgAsset.img, cx - drawW / 2, cy - drawH / 2, drawW, drawH);
   } else {
-    ctx.beginPath();
-    ctx.arc(cx, cy, Math.max(2, objDiameterPx / 2), 0, Math.PI * 2);
-    ctx.fillStyle = '#888';
-    ctx.fill();
+    // Thông báo khi chưa có ảnh vật thể thực tế
+    ctx.fillStyle = '#ff6b6b';
+    ctx.font = '14px system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Chưa có ảnh vật thể', cx, cy);
   }
 
   if (useCam) {
@@ -192,6 +196,7 @@ async function update() {
 
   ctx.restore();
 
+  // Viền ngoài FOV
   ctx.beginPath();
   ctx.arc(cx, cy, radius, 0, Math.PI * 2);
   ctx.strokeStyle = '#ddd';
