@@ -53,7 +53,7 @@ async function initObjects() {
     update();
   } catch (err) {
     console.error(err);
-    el.statsBar.textContent = 'Lỗi nạp dữ liệu từ thư mục object/.';
+    el.statsBar.textContent = 'Lỗi nạp objects.json.';
   }
 }
 
@@ -159,7 +159,6 @@ async function update() {
   const objDiameterPx = currentObj.angularSizeArcsec * pxPerArcsec;
 
   if (imgAsset.loaded) {
-    // Toàn bộ bề rộng ảnh mẫu ứng đúng với đường kính hành tinh
     const aspect = imgAsset.width / imgAsset.height;
     let drawW, drawH;
     if (aspect >= 1) {
