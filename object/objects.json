@@ -2,7 +2,7 @@
   {
     "id": "moon",
     "name": "Mặt Trăng",
-    "file": "moon.jpg",
+    "file": "moon.png",
     "distanceAU": 0.00257,
     "angularSizeArcsec": 1860
   },
