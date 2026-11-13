@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telescope Calculator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- CỘT TRÁI: KHUNG NHÌN FOV -->
+    <div class="left-panel">
+      <div class="top-bar">
+        <div class="info-item">
+          <span class="label">Khoảng cách AU</span>
+          <span id="disp-distance" class="value">-</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Tên vật thể</span>
+          <select id="select-object"></select>
+        </div>
+        <div class="info-item">
+          <span class="label">Độ phóng đại</span>
+          <span id="disp-mag" class="value">-</span>
+        </div>
+      </div>
+
+      <div class="fov-wrapper">
+        <canvas id="fov-canvas" width="460" height="460"></canvas>
+      </div>
+
+      <div class="bottom-stats" id="stats-bar"></div>
+    </div>
+
+    <!-- CỘT PHẢI: CẤU HÌNH QUANG HỌC -->
+    <div class="right-panel">
+      <section class="group">
+        <div class="row">
+          <label for="scope-aperture">Đường kính mm</label>
+          <input type="number" id="scope-aperture" value="150" min="10" step="1">
+        </div>
+        <div class="row">
+          <label for="scope-fl">Chiều dài tiêu cự</label>
+          <input type="number" id="scope-fl" value="750" min="50" step="1">
+        </div>
+        <div class="row">
+          <label for="scope-barrel">Chuẩn thị kính</label>
+          <select id="scope-barrel">
+            <option value="1.25">1.25"</option>
+            <option value="2">2"</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="group">
+        <div class="group-header">
+          <label for="chk-eyepiece">Thị kính</label>
+          <input type="checkbox" id="chk-eyepiece" checked>
+        </div>
+        <div id="eyepiece-fields">
+          <div class="row">
+            <label for="ep-fl">Chiều dài tiêu cự mm</label>
+            <input type="number" id="ep-fl" value="25" min="1" step="0.5">
+          </div>
+          <div class="row">
+            <label for="ep-afov">Phạm vi quan sát °</label>
+            <input type="number" id="ep-afov" value="52" min="20" max="120" step="1">
+          </div>
+          <div class="row">
+            <label for="ep-barlow">Barlow lens</label>
+            <select id="ep-barlow">
+              <option value="1">Không (1x)</option>
+              <option value="1.5">1.5x</option>
+              <option value="2">2x</option>
+              <option value="2.5">2.5x</option>
+              <option value="3">3x</option>
+              <option value="5">5x</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="group">
+        <div class="group-header">
+          <label for="chk-camera">Máy ảnh</label>
+          <input type="checkbox" id="chk-camera">
+        </div>
+        <div id="camera-fields" class="disabled">
+          <div class="row">
+            <label for="cam-pixel">Kích thước pixel µm</label>
+            <input type="number" id="cam-pixel" value="3.76" min="0.5" step="0.01">
+          </div>
+          <div class="row">
+            <label>Kích thước hình ảnh</label>
+            <div class="dual-input">
+              <input type="number" id="cam-res-w" value="3008" min="100" step="1">
+              <span>×</span>
+              <input type="number" id="cam-res-h" value="3008" min="100" step="1">
+            </div>
+          </div>
+          <div class="row">
+            <label>Kích thước ma trận</label>
+            <div class="dual-input">
+              <input type="number" id="cam-sensor-w" value="11.31" step="0.01" readonly>
+              <span>×</span>
+              <input type="number" id="cam-sensor-h" value="11.31" step="0.01" readonly>
+            </div>
+          </div>
+          <div class="row">
+            <label for="cam-bin">Binning</label>
+            <select id="cam-bin">
+              <option value="1">1×1</option>
+              <option value="2">2×2</option>
+              <option value="3">3×3</option>
+              <option value="4">4×4</option>
+            </select>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
