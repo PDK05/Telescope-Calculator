@@ -1,0 +1,23 @@
+[
+  {
+    "id": "moon",
+    "name": "Mặt Trăng",
+    "file": "moon.jpg",
+    "distanceAU": 0.00257,
+    "angularSizeArcsec": 1860
+  },
+  {
+    "id": "jupiter",
+    "name": "Sao Mộc",
+    "file": "jupiter.jpg",
+    "distanceAU": 5.2,
+    "angularSizeArcsec": 45
+  },
+  {
+    "id": "saturn",
+    "name": "Sao Thổ",
+    "file": "saturn.jpg",
+    "distanceAU": 9.58,
+    "angularSizeArcsec": 42
+  }
+]
