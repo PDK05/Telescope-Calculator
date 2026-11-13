@@ -160,7 +160,6 @@ async function update() {
   const objDiameterPx = currentObj.angularSizeArcsec * pxPerArcsec;
 
   if (imgAsset.loaded) {
-    // Chỉ vẽ ảnh thực khi đã tìm thấy file trong object/
     const aspect = imgAsset.width / imgAsset.height;
     let drawW, drawH;
     if (aspect >= 1) {
@@ -171,9 +170,13 @@ async function update() {
       drawW = objDiameterPx * aspect;
     }
 
+    // Bật khử răng cưa và làm mịn ảnh chất lượng cao
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
     ctx.drawImage(imgAsset.img, cx - drawW / 2, cy - drawH / 2, drawW, drawH);
   } else {
-    // Thông báo khi chưa có ảnh vật thể thực tế
+    // Thông báo khi chưa có file ảnh thực tế trong thư mục object/
     ctx.fillStyle = '#ff6b6b';
     ctx.font = '14px system-ui, sans-serif';
     ctx.textAlign = 'center';
