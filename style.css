@@ -1,0 +1,181 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background: #111;
+  color: #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 16px;
+}
+
+.app-container {
+  display: flex;
+  gap: 24px;
+  border: 2px solid #444;
+  background: #181818;
+  padding: 20px;
+  max-width: 920px;
+  width: 100%;
+}
+
+/* CỘT TRÁI */
+.left-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  gap: 12px;
+  text-align: center;
+}
+
+.info-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-item .label {
+  font-size: 13px;
+  color: #aaa;
+}
+
+.info-item .value {
+  font-size: 15px;
+  font-weight: 600;
+  padding: 4px 0;
+}
+
+.info-item select {
+  background: #222;
+  color: #fff;
+  border: 1px solid #555;
+  padding: 4px 6px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.fov-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.bottom-stats {
+  font-size: 12px;
+  color: #bbb;
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* CỘT PHẢI */
+.right-panel {
+  width: 320px;
+  border: 2px solid #444;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.group-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #333;
+}
+
+.group-header input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.row label {
+  color: #ccc;
+}
+
+.row input[type="number"],
+.row select {
+  width: 110px;
+  background: #222;
+  color: #fff;
+  border: 1px solid #555;
+  padding: 4px 6px;
+  font-size: 13px;
+  text-align: right;
+}
+
+.row input[readonly] {
+  background: #1a1a1a;
+  color: #888;
+  border-color: #333;
+}
+
+.dual-input {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 110px;
+}
+
+.dual-input input[type="number"] {
+  width: 100%;
+  min-width: 0;
+  padding: 4px 2px;
+  text-align: center;
+}
+
+.disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+@media (max-width: 760px) {
+  .app-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .right-panel {
+    width: 100%;
+  }
+}
