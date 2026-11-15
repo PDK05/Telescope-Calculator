@@ -31,7 +31,7 @@
     "id": "andromeda_galaxy",
     "name": "Thiên hà Tiên Nữ",
     "file": "andromeda_galaxy.png",
-    "distanceAU": 1.52,
-    "angularSizeArcsec": 14
+    "distanceAU": 160425000000,
+    "angularSizeArcsec": 11400
   }
 ]
