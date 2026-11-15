@@ -9,7 +9,7 @@
   {
     "id": "jupiter",
     "name": "Sao Mộc",
-    "file": "jupiter.jpg",
+    "file": "jupiter.png",
     "distanceAU": 5.2,
     "angularSizeArcsec": 45
   },
@@ -19,5 +19,12 @@
     "file": "saturn.png",
     "distanceAU": 9.58,
     "angularSizeArcsec": 42
+  }
+  {
+    "id": "mars",
+    "name": "Sao Hoả",
+    "file": "mars.png",
+    "distanceAU": 1.52,
+    "angularSizeArcsec": 14
   }
 ]
