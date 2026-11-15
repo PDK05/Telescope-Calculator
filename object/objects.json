@@ -26,5 +26,12 @@
     "file": "mars.png",
     "distanceAU": 1.52,
     "angularSizeArcsec": 14
+  },
+    {
+    "id": "andromeda_galaxy",
+    "name": "Thiên hà Tiên Nữ",
+    "file": "andromeda_galaxy.png",
+    "distanceAU": 1.52,
+    "angularSizeArcsec": 14
   }
 ]
