@@ -40,11 +40,23 @@ async function initObjects() {
     objectsData = await res.json();
 
     el.selectObject.innerHTML = '';
+    // Nhóm vật thể theo "category" (nếu có) bằng <optgroup>
+    const groups = new Map();
     objectsData.forEach((obj, index) => {
       const opt = document.createElement('option');
       opt.value = index;
       opt.textContent = obj.name;
-      el.selectObject.appendChild(opt);
+      if (!obj.category) {
+        el.selectObject.appendChild(opt);
+        return;
+      }
+      if (!groups.has(obj.category)) {
+        const og = document.createElement('optgroup');
+        og.label = obj.category;
+        groups.set(obj.category, og);
+        el.selectObject.appendChild(og);
+      }
+      groups.get(obj.category).appendChild(opt);
     });
 
     if (objectsData.length > 0) {
@@ -131,6 +143,13 @@ function loadObjectImage(obj) {
   });
 }
 
+function formatDistance(au) {
+  if (au < 1000) return `${au} AU`;
+  const ly = au / 63241.077;
+  if (ly >= 1e6) return `${(ly / 1e6).toFixed(1)} triệu ly`;
+  return `${Math.round(ly).toLocaleString('vi-VN')} ly`;
+}
+
 async function update() {
   const objIdx = parseInt(el.selectObject.value, 10) || 0;
   const currentObj = objectsData[objIdx];
@@ -184,9 +203,7 @@ async function update() {
     tfovArcsec = 3600;
   }
 
-  el.dispDistance.textContent = currentObj.distanceAU >= 1000
-    ? `${(currentObj.distanceAU / 63241.077).toFixed(1)} ly`
-    : `${currentObj.distanceAU} AU`;
+  el.dispDistance.textContent = formatDistance(currentObj.distanceAU);
   el.dispMag.textContent = useEp ? `${mag.toFixed(1)}×` : 'Prime Focus';
 
   const W = canvas.width;
@@ -210,12 +227,21 @@ async function update() {
   const objDiameterPx = currentObj.angularSizeArcsec * pxPerArcsec;
 
   if (imgAsset.loaded) {
-    const cW = imgAsset.crop.width;
-    const cH = imgAsset.crop.height;
+    // imageWidthArcsec (tuỳ chọn): biết chính xác bề ngang ảnh ứng với bao nhiêu giây cung
+    // -> vẽ nguyên ảnh, không tự cắt viền (dùng cho sao đôi, nơi nền đen chiếm gần hết ảnh)
+    const fullFrame = currentObj.imageWidthArcsec > 0;
+    const src = fullFrame
+      ? { x: 0, y: 0, width: imgAsset.img.naturalWidth, height: imgAsset.img.naturalHeight }
+      : imgAsset.crop;
+    const cW = src.width;
+    const cH = src.height;
 
     const aspect = cW / cH;
     let drawW, drawH;
-    if (cW >= cH) {
+    if (fullFrame) {
+      drawW = currentObj.imageWidthArcsec * pxPerArcsec;
+      drawH = drawW / aspect;
+    } else if (cW >= cH) {
       drawW = objDiameterPx;
       drawH = objDiameterPx / aspect;
     } else {
@@ -231,12 +257,14 @@ async function update() {
 
     ctx.save();
     ctx.globalAlpha = brightnessFactor;
+    // Ảnh nền đen: cộng sáng để không lộ khung chữ nhật trên nền thị trường
+    if (fullFrame) ctx.globalCompositeOperation = 'lighter';
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
 
     ctx.drawImage(
       imgAsset.img,
-      imgAsset.crop.x, imgAsset.crop.y, cW, cH,
+      src.x, src.y, cW, cH,
       cx - drawW / 2, cy - drawH / 2, drawW, drawH
     );
     ctx.restore();
